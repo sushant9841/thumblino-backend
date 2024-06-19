@@ -1,9 +1,10 @@
 const express = require("express");
-const http = require("http");
 const puppeteer = require("puppeteer");
 const cors = require("cors");
 
 const app = express();
+
+// Enable CORS for all origins
 app.use(cors());
 
 let browserInstance = null;
@@ -67,7 +68,7 @@ app.get(
   }
 );
 
-const port = 5000;
+const port = process.env.PORT || 5000;
 app.listen(port, () =>
   console.log(`Server running on http://localhost:${port}`)
 );
