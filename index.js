@@ -4,7 +4,13 @@ const puppeteer = require("puppeteer");
 const cors = require("cors");
 
 const app = express();
-app.use(cors());
+
+// Use CORS and allow the frontend domain
+app.use(
+  cors({
+    origin: "https://thumblino.vercel.app", // Change this to your actual frontend URL
+  })
+);
 
 let browserInstance = null;
 
