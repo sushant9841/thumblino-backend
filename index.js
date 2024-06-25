@@ -5,7 +5,7 @@ const fs = require("fs").promises;
 const path = require("path");
 
 const app = express();
-app.use(cors()); // Use CORS middleware to allow all origins
+app.use(cors());
 
 let browserInstance = null;
 
@@ -46,21 +46,6 @@ function generateFileName(url, width, height, quality, scale) {
   return `${domainName}_${width}x${height}_${quality}_${scale}.webp`;
 }
 
-// Function to solve CAPTCHA using an external service
-async function solveCaptcha(page) {
-  // Example: Assuming a CAPTCHA input field with ID 'captcha-input' and submit button with ID 'submit-button'
-  await page.evaluate(() => {
-    const captchaInput = document.querySelector("input#captcha-input");
-    const submitButton = document.querySelector("button#submit-button");
-
-    // Simulate solving CAPTCHA (replace with your logic)
-    captchaInput.value = "CAPTCHA_SOLVED";
-    submitButton.click();
-  });
-
-  await page.waitForNavigation({ waitUntil: "networkidle0" });
-}
-
 app.get(
   "/get/width/:width/height/:height/quality/:quality/scale/:scale/:url",
   async (req, res) => {
@@ -85,17 +70,6 @@ app.get(
       });
 
       await page.goto(formattedUrl, { waitUntil: "networkidle0" });
-
-      // Check for CAPTCHA (example implementation)
-      const captchaImageBase64 = await page.evaluate(() => {
-        const captchaImage = document.querySelector("img#captcha-img");
-        return captchaImage ? captchaImage.src.split(",")[1] : null;
-      });
-
-      if (captchaImageBase64) {
-        console.log("CAPTCHA detected, solving...");
-        await solveCaptcha(page);
-      }
 
       const screenshotBuffer = await page.screenshot({
         type: "webp", // Capture as WebP format
